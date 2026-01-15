@@ -1,0 +1,4 @@
+.terrafrom/
+.terraform.loc.hcl
+terraform.tfstate*
+*.tfvars
