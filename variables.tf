@@ -2,5 +2,5 @@ variable "prefix" {
 }
 
 variable "location" {
-  
+
 }

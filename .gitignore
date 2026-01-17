@@ -1,4 +1,5 @@
-.terrafrom/
-.terraform.loc.hcl
+.terraform/
+.terraform.*
 terraform.tfstate*
 *.tfvars
+LICENSE.*
