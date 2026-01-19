@@ -1,6 +1,30 @@
 trigger:
 - main
-
+# final version part 14
+#  az disk delete --name myosdisk1 --resource-group eli7e-rg --yes
+#  git add main.tf && git commit -m "Use dynamic disk name and enable auto-delete for disks" && git push
+##########################################
+#  terraform state rm azurerm_resource_group.example
+#  az disk delete --name myosdisk1 --resource-group eli7e-rg --yes --no-wait
+#  git add main.tf && git commit -m "Change resource group to data source - should not be destroyed" && git push
+##########################################
+#  az group create --name eli7e-terraform-state-rg --location "UK South"
+# az resource move --destination-group eli7e-terraform-state-rg --ids /subscriptions/ac735d05-0b35-4660-a3e3-6df6aedfe159/resourceGroups/eli7e-rg/providers/Microsoft.Storage/storageAccounts/eli7estorage
+# az role assignment create --role "Storage Blob Data Contributor" --assignee 9699f8c4-e415-4dde-b49b-d43f2ed0f4f9 --scope "/subscriptions/ac735d05-0b35-4660-a3e3-6df6aedfe159/resourceGroups/eli7e-terraform-state-rg/providers/Microsoft.Storage/storageAccounts/eli7estorage"
+#  az role assignment create --role "Storage Blob Data Contributor" --assignee cb0cd941-8cf1-4c51-9116-41652d27eb7b --scope "/subscriptions/ac735d05-0b35-4660-a3e3-6df6aedfe159/resourceGroups/eli7e-terraform-state-rg/providers/Microsoft.Storage/storageAccounts/eli7estorage"
+#  sleep 10 && cd /home/eli7e/Documents/terraform_projects/terraform_code && terraform init -reconfigure
+# az storage account show -n eli7estorage --query "{Name:name, ResourceGroup:resourceGroup, Id:id}" -o json
+# terraform init -migrate-state
+# git add backend.tf main.tf && git commit -m "Move state storage to separate resource group, use eli7e-rg as managed resource" && git push
+# ✅ Created eli7e-terraform-state-rg - Separate resource group for state storage
+# ✅ Moved eli7estorage - Storage account relocated to the new resource group
+# ✅ Updated backend.tf - Points to new resource group location
+# ✅ Updated main.tf - eli7e-rg is now a managed resource again
+# ✅ Granted permissions - Service principal and user have access to new location
+# ✅ Migrated state - Terraform state successfully moved to new backend
+##################################################
+#  git add provider.tf && git commit -m "Enable force delete for resource groups to clean up orphaned resources" && git push
+###########################################################
 stages:
 - stage: Build
   jobs:
@@ -13,7 +37,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        backendServiceArm: 'eli7e-asghar'
+        backendServiceArm: 'eli7e_service_connection_vmss'
         backendAzureRmResourceGroupName: 'eli7e-terraform-state-rg'
         backendAzureRmStorageAccountName: 'eli7estorage'
         backendAzureRmContainerName: 'eli7e-tfstate'
@@ -24,6 +48,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'validate'
+        environmentServiceNameAzureRM: 'eli7e_service_connection_vmss'
     
     - task: TerraformTask@5
       displayName: tf format
@@ -32,7 +57,7 @@ stages:
         command: 'custom'
         outputTo: 'console'
         customCommand: 'fmt'
-        environmentServiceNameAzureRM: 'eli7e-asghar'
+        environmentServiceNameAzureRM: 'eli7e_service_connection_vmss'
     
     - task: TerraformTask@5
       displayName: tf plan
@@ -40,7 +65,7 @@ stages:
         provider: 'azurerm'
         command: 'plan'
         commandOptions: '-out tfplanfile'
-        environmentServiceNameAzureRM: 'eli7e-asghar'
+        environmentServiceNameAzureRM: 'eli7e_service_connection_vmss'
     
     - task: ArchiveFiles@2
       displayName: Archive files
@@ -92,7 +117,7 @@ stages:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(Pipeline.Workspace)/terraform'
-              backendServiceArm: 'eli7e-asghar'
+              backendServiceArm: 'eli7e_service_connection_vmss'
               backendAzureRmResourceGroupName: 'eli7e-terraform-state-rg'
               backendAzureRmStorageAccountName: 'eli7estorage'
               backendAzureRmContainerName: 'eli7e-tfstate'
@@ -105,7 +130,7 @@ stages:
               command: 'apply'
               workingDirectory: '$(Pipeline.Workspace)/terraform'
               commandOptions: 'tfplanfile'
-              environmentServiceNameAzureRM: 'eli7e-asghar'
+              environmentServiceNameAzureRM: 'eli7e_service_connection_vmss'
 
 - stage: Destroy
   dependsOn: Deploy
@@ -141,7 +166,7 @@ stages:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(Pipeline.Workspace)/terraform'
-              backendServiceArm: 'eli7e-asghar'
+              backendServiceArm: 'eli7e_service_connection_vmss'
               backendAzureRmResourceGroupName: 'eli7e-terraform-state-rg'
               backendAzureRmStorageAccountName: 'eli7estorage'
               backendAzureRmContainerName: 'eli7e-tfstate'
@@ -153,4 +178,4 @@ stages:
               provider: 'azurerm'
               command: 'destroy'
               workingDirectory: '$(Pipeline.Workspace)/terraform'
-              environmentServiceNameAzureRM: 'eli7e-asghar'
+              environmentServiceNameAzureRM: 'eli7e_service_connection_vmss'
