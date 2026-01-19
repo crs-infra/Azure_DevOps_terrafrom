@@ -1,0 +1,38 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  - stage: Plan
+    displayName: 'Terraform Plan'
+    jobs:
+      - job: TerraformPlan
+        displayName: 'Run Terraform Plan'
+        steps:
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: 'latest'
+
+          - task: TerraformTaskV5@5
+            displayName: 'terraform init'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              backendServiceArm: 'YOUR_SERVICE_CONNECTION_NAME'  # Replace with your service connection name
+              backendAzureRmResourceGroupName: 'eli7e-terraform-state-rg'
+              backendAzureRmStorageAccountName: 'eli7estorage'
+              backendAzureRmContainerName: 'eli7e-tfstate'
+              backendAzureRmKey: 'prod.terraform.tfstate'
+
+          - task: TerraformTaskV5@5
+            displayName: 'terraform plan'
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              commandOptions: '-out tfplanfile -detailed-exitcode'
+              environmentServiceNameAzureRM: 'YOUR_SERVICE_CONNECTION_NAME'  # Replace with your service connection name
