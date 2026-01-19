@@ -15,11 +15,14 @@ provider "azurerm" {
     }
   }
   
-  # Explicitly disable CLI authentication
-  # Will use OIDC (Workload Identity Federation) from Azure DevOps service connection
-  use_cli = false
-  use_oidc = true
+  # Disable all automatic authentication methods
+  use_cli                         = false
+  use_msi                         = false
   
-  # Subscription ID is specified to ensure correct subscription is used
+  # Authentication will come from environment variables set by Azure DevOps:
+  # ARM_CLIENT_ID, ARM_TENANT_ID, ARM_SUBSCRIPTION_ID
+  # ARM_OIDC_TOKEN (for Workload Identity Federation)
+  # OR ARM_CLIENT_SECRET (for Service Principal)
+  
   subscription_id = "ac735d05-0b35-4660-a3e3-6df6aedfe159"
 }
