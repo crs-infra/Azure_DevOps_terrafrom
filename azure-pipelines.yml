@@ -17,7 +17,7 @@ stages:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(System.DefaultWorkingDirectory)'
-              backendServiceArm: 'YOUR_SERVICE_CONNECTION_NAME'  # Replace with your service connection name
+              backendServiceArm: 'Visual Studio Enterprise Subscription(ac735d05-0b35-4660-a3e3-6df6aedfe159)'
               backendAzureRmResourceGroupName: 'eli7e-terraform-state-rg'
               backendAzureRmStorageAccountName: 'eli7estorage'
               backendAzureRmContainerName: 'eli7e-tfstate'
@@ -30,4 +30,4 @@ stages:
               command: 'plan'
               workingDirectory: '$(System.DefaultWorkingDirectory)'
               commandOptions: '-out tfplanfile -detailed-exitcode'
-              environmentServiceNameAzureRM: 'YOUR_SERVICE_CONNECTION_NAME'  # Replace with your service connection name
+              environmentServiceNameAzureRM: 'Visual Studio Enterprise Subscription(ac735d05-0b35-4660-a3e3-6df6aedfe159)'
