@@ -2,7 +2,7 @@ trigger:
   - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: 'eli7e_vmss_19_Jan_2026'
 
 stages:
   - stage: Plan
@@ -11,11 +11,6 @@ stages:
       - job: TerraformPlan
         displayName: 'Run Terraform Plan'
         steps:
-          - task: TerraformInstaller@1
-            displayName: 'Install Terraform'
-            inputs:
-              terraformVersion: 'latest'
-
           - task: TerraformTaskV5@5
             displayName: 'terraform init'
             inputs:
