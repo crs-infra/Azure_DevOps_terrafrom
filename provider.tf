@@ -15,7 +15,8 @@ provider "azurerm" {
     }
   }
   
-  use_cli                  = false
-  use_oidc                 = true
-  subscription_id          = "ac735d05-0b35-4660-a3e3-6df6aedfe159"
+  # Authentication will use environment variables from Azure DevOps service connection
+  # The Terraform task should be configured with an Azure service connection
+  use_cli         = false
+  subscription_id = "ac735d05-0b35-4660-a3e3-6df6aedfe159"
 }
