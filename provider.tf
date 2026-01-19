@@ -15,8 +15,10 @@ provider "azurerm" {
     }
   }
   
-  # Authentication will use environment variables from Azure DevOps service connection
-  # The Terraform task should be configured with an Azure service connection
-  use_cli         = false
+  # Explicitly disable CLI authentication
+  use_cli = false
+  
+  # These will be populated from environment variables or Azure DevOps service connection:
+  # ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_TENANT_ID, ARM_SUBSCRIPTION_ID
   subscription_id = "ac735d05-0b35-4660-a3e3-6df6aedfe159"
 }
