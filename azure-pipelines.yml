@@ -30,7 +30,7 @@ stages:
   jobs:
   - job: Build
     pool:
-      name: eli7e_vmss_19_Jan_2026
+      name: kaka_vmss
     steps:
     - task: TerraformTask@5
       displayName: tf init
@@ -90,7 +90,7 @@ stages:
   - deployment: DeployTerraform
     displayName: Deploy Infrastructure
     pool:
-      name: eli7e_vmss_19_Jan_2026
+      name: kaka_vmss
     environment: 'production'
     strategy:
       runOnce:
@@ -139,7 +139,7 @@ stages:
   - deployment: DestroyTerraform
     displayName: Destroy Infrastructure
     pool:
-      name: eli7e_vmss_19_Jan_2026
+      name: kaka_vmss
     environment: 'destruction'
     strategy:
       runOnce:
